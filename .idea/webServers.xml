@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b896b24c-76cc-40a1-b976-9076e265fcf5" name="lbkz" url="https://lbkz.wqzbxh.site/">
+        <fileTransfer rootFolder="/home/wwwroot/lbkz/lbkz" accessType="SFTP" host="1.117.159.188" port="22" sshConfigId="e357cff2-744a-4c93-8ab3-eab6df7c0c5f" sshConfig="root@1.117.159.188:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
