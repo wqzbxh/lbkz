@@ -1,5 +1,6 @@
 <?php
 /**
+<<<<<<< Updated upstream
  * Created by : PhpStorm
  * User: 哑巴湖大水怪（王海洋）
  * Date: 2023/5/3
@@ -128,5 +129,20 @@ class Lbkz
     {
         $response = "<xml><ToUserName><![CDATA[" . $fromUser . "]]></ToUserName><FromUserName><![CDATA[" . $toUser . "]]></FromUserName><CreateTime>" . time() . "</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[暂时未定义此类消息]]></Content></xml>";
         echo $response;
+=======
+ * Created by : VsCode
+ * User: Dumb Lake Monster (Wang Haiyang)
+ * Date:  2023/5/3
+ * Time:  13:55
+ */
+
+namespace App\Http\Controllers;
+
+class Lbkz
+{
+    public function index()
+    {
+
+>>>>>>> Stashed changes
     }
 }
