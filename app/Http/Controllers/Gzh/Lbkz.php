@@ -1,6 +1,5 @@
 <?php
 /**
-<<<<<<< Updated upstream
  * Created by : PhpStorm
  * User: 哑巴湖大水怪（王海洋）
  * Date: 2023/5/3
@@ -52,6 +51,16 @@ class Lbkz
             {
                 case "text":
                     $this->hanldText($fromUser,$toUser,$content);
+                case "event":
+                    $event = $xmlData->Event;
+                    $eventKey = $xmlData->EventKey;
+                    if($event == 'CLICK'){
+                        $this->hanldClick($eventKey,$fromUser,$toUser,$content);
+                    }
+
+                    if($event == 'scancode_push'){
+                        $this->hanldScancodePush($eventKey,$fromUser,$toUser,$content,$xmlData);
+                    }
                 default:
                     $this->other($fromUser,$toUser,$content);
             }
@@ -59,6 +68,10 @@ class Lbkz
         }
     }
 
+    /***
+     * @return mixed
+     * 测试
+     */
     public function getAccessToken()
     {
 
@@ -77,6 +90,12 @@ class Lbkz
         }
     }
 
+    /***
+     * @return void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * 生成菜单
+     */
+
 //    https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN
 
     public function createMenu()
@@ -85,14 +104,22 @@ class Lbkz
 
         $menuInfo = [
             'button' => [
-                array("type" => "click","name" => "按钮1", "key" => "测试2"),
+                array("type" => "click","name" => "你好", "key" => "V1002"),
                 array(
-                    'name' => '菜单2',
+                    'name' => '个人信息',
                     'sub_button' => array(
-                        array('type'=>'view','name'=>'哑巴湖大水怪','url'=>'https://wp.wqzbxh.site'),
-                        array('type'=>'click','name'=>'赞一下我','key'=>'V1001_GOOD')
+                        array('type'=>'view','name'=>'个人介绍','url'=>'https://wp.wqzbxh.site/?page_id=2'),
+                        array('type'=>'scancode_push','name'=>'扫一扫','key'=>'V1003'),
+                        array('type'=>'location_select','name'=>'获取地理位置','key'=>'V1004'),
                     )
-                )
+                ),
+                array(
+                    'name' => '博文查阅',
+                    'sub_button' => array(
+                        array('type'=>'view','name'=>'Msql数据库','url'=>'https://wp.wqzbxh.site/?cat=9'),
+                        array('type'=>'view','name'=>'PHP在线编辑','url'=>'https://wp.wqzbxh.site/?p=87'),
+                    )
+                ),
 
             ]
         ];
@@ -129,20 +156,113 @@ class Lbkz
     {
         $response = "<xml><ToUserName><![CDATA[" . $fromUser . "]]></ToUserName><FromUserName><![CDATA[" . $toUser . "]]></FromUserName><CreateTime>" . time() . "</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[暂时未定义此类消息]]></Content></xml>";
         echo $response;
-=======
- * Created by : VsCode
- * User: Dumb Lake Monster (Wang Haiyang)
- * Date:  2023/5/3
- * Time:  13:55
- */
-
-namespace App\Http\Controllers;
-
-class Lbkz
-{
-    public function index()
-    {
-
->>>>>>> Stashed changes
     }
+
+    public function hanldClick($eventKey,$fromUser,$toUser,$content)
+    {
+        if($eventKey == "V1002" ){
+            $response = "<xml>
+                  <ToUserName><![CDATA[". $fromUser ."]]></ToUserName>
+                  <FromUserName><![CDATA[". $toUser ."]]></FromUserName>
+                  <CreateTime>" . time() . "</CreateTime>
+                  <MsgType><![CDATA[image]]></MsgType>
+                  <Image>
+                    <MediaId><![CDATA[0YKgg8iew5mJajuBQIRKR2nQE8lLm4LBwTdKXiGPtaBujDY1MbXQ_LXlCGIXNixv]]></MediaId>
+                  </Image>
+                  </xml>";
+                }
+        echo $response;
+    }
+
+    public function hanldScancodePush($eventKey,$fromUser,$toUser,$content,$xmldata)
+    {
+            $ScanResult = '123';
+            $response = "<xml>
+                            <ToUserName><![CDATA[" . $fromUser . "]]></ToUserName>
+                            <FromUserName><![CDATA[" . $toUser . "]]></FromUserName>
+                            <CreateTime>" . time() . "</CreateTime>
+                            <MsgType><![CDATA[text]]></MsgType>
+                            <Content><![CDATA[调用了扫一扫,扫描结果信息：".$ScanResult."]]></Content>
+                            </xml>";
+//        }
+        echo $response;
+    }
+
+
+    /***
+     * 上传素材
+     */
+    public function upFile(){
+        $access_token = $this->getAccessToken();
+        $type = 'image'; // 上传的素材类型，可选值包括 image、voice、video、thumb
+        $filepath = public_path('images/http.png'); // 上传的文件路径，本地文件或远程 URL 都可
+        $client = new Client([
+            'base_uri' => 'https://api.weixin.qq.com/cgi-bin/media/upload',
+        ]);
+        $data = [
+            'name'     => 'media',
+            'contents' => fopen($filepath, 'r'),
+        ];
+        try {
+            $response = $client->request('POST', 'upload', [
+                'query' => [
+                    'access_token' => $access_token,
+                    'type' => $type
+                ],
+                'multipart' => [
+                    [
+                        'name' => 'media',
+                        'contents' => fopen($filepath, 'r'), // 替换成实际的图片文件路径
+                    ],
+                ],
+            ]);
+
+            $responseBody = json_decode($response->getBody(), true);
+
+            if (isset($responseBody['media_id'])) {
+                echo 'Temporary media uploaded successfully! Media ID: ' . $responseBody['media_id'];
+            } else {
+                echo 'Failed to upload temporary media: ' . $responseBody['errmsg'];
+            }
+        } catch (RequestException $e) {
+            echo 'Failed to send request: ' . $e->getMessage();
+        }
+    }
+
+    /**
+     * 添加客服接口
+     */
+    public function addKfAccess(){
+        $access_token = $this->getAccessToken();
+
+        $client = new Client([
+            'base_uri' => 'https://api.weixin.qq.com/customservice/',
+        ]);
+
+        $kf_account = 'test1@test';
+        $nickname = '客服1';
+
+        $url = 'kfaccount/add?access_token=' . $access_token;
+
+        try {
+            $response = $client->request('POST', $url, [
+                'json' => [
+                    'kf_account' => $kf_account,
+                    'nickname' => $nickname,
+                ],
+            ]);
+
+
+            $responseBody = json_decode($response->getBody(), true);
+            if ($responseBody['errcode'] === 0) {
+                echo 'Custom service added successfully!';
+            } else {
+                echo 'Failed to add custom service: ' . $responseBody['errmsg'];
+            }
+        } catch (RequestException $e) {
+            echo 'Failed to send request: ' . $e->getMessage();
+        }
+    }
+
+
 }

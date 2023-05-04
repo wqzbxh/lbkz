@@ -26,6 +26,9 @@ Route::any('/gzh_check_signature', [\App\Http\Controllers\Gzh\Lbkz::class, 'chec
 Route::get('/gzh_get_access_token', [\App\Http\Controllers\Gzh\Lbkz::class, 'getAccessToken'])->name('gzh.get_access_token');
 Route::get('/gzh_create_menu', [\App\Http\Controllers\Gzh\Lbkz::class, 'createMenu'])->name('gzh.create_menu');
 
+Route::get('/gzh_upload', [\App\Http\Controllers\Gzh\Lbkz::class, 'upFile'])->name('gzh.gzh_upload');
+Route::get('/gzh_add_kf_access', [\App\Http\Controllers\Gzh\Lbkz::class, 'addKfAccess'])->name('gzh.add_kf_access');
+
 
 
 
